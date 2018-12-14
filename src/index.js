@@ -5,7 +5,8 @@ class Greet extends Component {
     
     state = {
         post: null,
-        loading: true
+        loading: true,
+        error: null
     }
  
     componentDidMount() {
@@ -16,22 +17,47 @@ class Greet extends Component {
 我一共有${data.length}个在线Github 仓库`,
           loading: false
         }))
+       .catch(err => {
+        this.setState({
+          loading: false,
+          error: err
+        })
+      })
     }
+
+    renderPosts() {
+    if(this.state.error) {
+      return this.renderError();
+    }
+
+    return <p>{ this.state.post }</p>;
+   }
+   
+   renderLoading() {
+    return <p>加载中...</p>;
+   }
+
+    renderError() {
+    return (
+      <p>
+        错误提示: {this.state.error.message}
+      </p>
+    );
+  }
 
    
     
     render() {
-        
         const {
-            post,
             loading
         } = this.state;
         
         return (
         <div>
-        {loading ? 
-         <p>加载中...</p> : 
-         <p>{ post }</p>
+        {
+            loading ?
+            this.renderLoading() :
+            this.renderPosts()
         }
         </div>
         )
